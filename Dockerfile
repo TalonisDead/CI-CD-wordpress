@@ -1,18 +1,18 @@
-# Sử dụng image Node.js
-FROM node:18
+# Sử dụng image PHP với Apache
+FROM php:8.2-apache
 
-# Thiết lập thư mục làm việc
-WORKDIR /app
+# Cài extension PHP cần thiết
+RUN docker-php-ext-install mysqli
 
-# Sao chép package.json và cài đặt dependencies
-COPY package*.json ./
-RUN npm install
+# Kích hoạt mod_rewrite cho permalink WordPress
+RUN a2enmod rewrite
 
-# Sao chép toàn bộ source code
-COPY . .
+# Copy mã nguồn WordPress (giả định bạn đã có sẵn trong thư mục)
+COPY . /var/www/html/
 
-# Chạy ứng dụng
-CMD ["npm", "start"]
+# Phân quyền cho thư mục web
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
-# Expose cổng 3000
-EXPOSE 3000
+# Mở cổng 80
+EXPOSE 80
