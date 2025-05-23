@@ -5,8 +5,8 @@ FROM node:18
 WORKDIR /app
 
 # Sao chép package.json và cài đặt dependencies
-COPY package.json .
-RUN npm install
+#COPY package.json .
+#RUN npm install
 
 # Sao chép toàn bộ source code
 COPY . .
