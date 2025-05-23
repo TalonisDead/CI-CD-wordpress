@@ -20,7 +20,7 @@ jobs:
 
       - name: 🛠️ Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest . 
 
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
@@ -37,8 +37,7 @@ jobs:
             docker stop wp-custom || true
             docker rm wp-custom || true
             docker run -d --name wp-custom -p 80:80 \
-#              -e WORDPRESS_DB_NAME=wp1 \
-#              -e WORDPRESS_DB_USER=wp_user \
-#              -e WORDPRESS_DB_PASSWORD=wp_pass \
-#              -e WORDPRESS_DB_HOST=192.168.1.100 \
               ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
+
+
+
