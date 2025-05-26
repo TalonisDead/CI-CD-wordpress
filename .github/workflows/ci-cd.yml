@@ -40,8 +40,13 @@ jobs:
             docker stop wp-custom || true
             docker rm wp-custom || true
 
-             echo "Starting new container on port 80..."
+            echo "Starting new WordPress container..."
             docker run -d --name wp-custom -p 80:80 \
+              -e WORDPRESS_DB_NAME=wp_db \
+              -e WORDPRESS_DB_USER=wp_user \
+              -e WORDPRESS_DB_PASSWORD=wp_pass \
+              -e WORDPRESS_DB_HOST=46.137.236.178 \
+              ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
               ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
 
 
