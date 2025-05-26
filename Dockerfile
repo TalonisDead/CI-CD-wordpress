@@ -2,12 +2,12 @@
 FROM php:8.2-apache
 
 # Cài extension PHP cần thiết
-RUN docker-php-ext-install mysqli \
-    apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libzip-dev \
     libonig-dev \
-    && docker-php-ext-install curl mbstring json zip
+    unzip \
+ && docker-php-ext-install mysqli curl mbstring json zip
 
 
 # Kích hoạt mod_rewrite cho permalink WordPress
