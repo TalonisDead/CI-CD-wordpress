@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 echo "[START] Export + Replace DB for WordPress"
@@ -28,4 +27,3 @@ echo "Replacing $OLD_URL ➜ $NEW_URL in SQL..."
 sed -i "s|$OLD_URL|$NEW_URL|g" "$BACKUP_FILE"
 
 echo "Done! SQL saved at: $BACKUP_FILE"
-
