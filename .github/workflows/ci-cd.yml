@@ -31,11 +31,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mysql-client
 
-
-      - name: 📤 Export and Prepare SQL from Local
-        run: |
-          bash ./scripts/export-import-wp-db.sh
-
       - name: 📡 Upload SQL to EC2
         uses: appleboy/scp-action@master
         with:
@@ -78,5 +73,10 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=localhost \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+
+
+        - name: 📤 Export and Prepare SQL from Local
+          run: |
+              bash ./scripts/export-import-wp-db.sh
 
             echo "✅ Done"
