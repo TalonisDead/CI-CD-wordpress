@@ -34,20 +34,20 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "Pulling latest image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
             echo "Stopping and removing old container if exists..."
-            docker stop wp-custom || true
-            docker rm wp-custom || true
+            docker stop wp-one || true
+            docker rm wp-one || true
 
             echo "Starting new WordPress container..."
-            docker run -d --name wp-custom -p 80:80 \
+            docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=46.137.236.178 \
-              ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
-              ${{ secrets.DOCKER_USERNAME }}/wp-custom:latest
+              ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+              
 
 
 
