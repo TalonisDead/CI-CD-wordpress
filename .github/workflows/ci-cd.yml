@@ -26,6 +26,12 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
+      - name: 🧰 Install MySQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+
+
       - name: 📤 Export and Prepare SQL from Local
         run: |
           bash ./scripts/export-import-wp-db.sh
