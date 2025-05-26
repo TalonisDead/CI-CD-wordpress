@@ -1,10 +1,11 @@
 # Sử dụng image PHP với Apache
 FROM php:8.2-apache
 
-# Cài extension PHP cần thiết
+# Cài các thư viện cần thiết, bao gồm cả libonig-dev
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libzip-dev \
+    libonig-dev \
     unzip \
     && docker-php-ext-install mysqli curl mbstring json zip
 
