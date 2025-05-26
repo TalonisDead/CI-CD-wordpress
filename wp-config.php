@@ -40,7 +40,7 @@ define( 'DB_COLLATE', '' );
 /**#@+
  * Authentication unique keys and salts.
  *
- * Change these to different unique phrases! You can generate these using
+ * Change these to different unique phrases! You can generate these usingggg
  * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
  *
  * You can change these at any point in time to invalidate all existing cookies.
