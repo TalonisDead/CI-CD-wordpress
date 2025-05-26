@@ -28,7 +28,7 @@ jobs:
 
       - name: 📤 Export and Prepare SQL from Local
         run: |
-          bash ./scripts/export-import-wp-db.sh
+          bash /scripts/export-import-wp-db.sh
 
       - name: 📡 Upload SQL to EC2
         uses: appleboy/scp-action@master
