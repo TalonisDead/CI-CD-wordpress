@@ -21,49 +21,25 @@ jobs:
       - name: 🛠️ Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest . 
-
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
-      - name: 🧰 Install MySQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client
-
-      - name: 📦 Deploy and Replace DB on EC2
+      - name: 📦 Deploy on EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "🚀 Pull latest Docker image"
+            echo "Pulling latest image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
-            echo "🛑 Stop and remove old container"
+            echo "Stopping and removing old container if exists..."
             docker stop wp-one || true
             docker rm wp-one || true
-
-            echo "🧨 Drop and recreate database"
-            mysql -u wp_user -pwp_pass -e "DROP DATABASE IF EXISTS wp_db; CREATE DATABASE wp_db;"
-
-            echo "📥 Import SQL dump"
-            mysql -u wp_user -pwp_pass wp_db < ~/wordpress-docker/Dockerfile/wordpress/mysql_db/wp1_backup.sql
-
-            echo "🔧 Update siteurl and home"
-            mysql -u wp_user -pwp_pass wp_db -e "
-              UPDATE wp_options SET option_value = 'http://46.137.236.178' WHERE option_name = 'siteurl';
-              UPDATE wp_options SET option_value = 'http://46.137.236.178' WHERE option_name = 'home';
-            "
-
-            echo "🚀 Run WordPress container"
+            echo "Starting new WordPress container..."
             docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
-              -e WORDPRESS_DB_HOST=localhost \
+              -e WORDPRESS_DB_HOST=46.137.236.178 \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
-
-            echo "✅ Done"
