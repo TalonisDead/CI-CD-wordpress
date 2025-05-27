@@ -20,12 +20,10 @@ jobs:
 
       - name: 🛠️ Build Docker Image
         run: |
-          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
-
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
-          sudo docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
+          docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
       - name: 📦 Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -38,7 +36,6 @@ jobs:
             sudo apt install mysql-server -y
             sudo systemctl start mysql
             sudo systemctl enable mysql
-
             echo "🛠️ Setup MySQL Database and User"
             sudo mysql -e "
               CREATE DATABASE IF NOT EXISTS wp_db;
@@ -46,28 +43,22 @@ jobs:
               GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%';
               FLUSH PRIVILEGES;
             "
-
             echo "🧼 Clean up old WordPress container"
-            sudo docker stop wp-one || true
-            sudo docker rm wp-one || true
-
+            docker stop wp-one || true
+            docker rm wp-one || true
             echo "🚀 Run new WordPress container"
-            sudo docker run -d --name wp-one -p 80:80 \
+            docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
             echo "📦 Copy wp1_backup.sql from container to host"
             sleep 10  # Wait for container to fully start
-            sudo docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
-
+            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
             echo "📥 Import SQL backup"
             sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
-
             echo "🔧 Update siteurl and home"
             mysql -u wp_user -pwp_pass wp_db -e "
               UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
               UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';
-            "
