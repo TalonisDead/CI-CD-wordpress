@@ -43,3 +43,26 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+
+            echo "build mysql server" 
+            sudo apt install mysql-server -y
+            sudo systemctl start mysql
+            sudo systemctl enable mysql
+            sudo systemctl status mysql
+            echo "create user mysql" 
+            sudo mysql
+            CREATE DATABASE wp_db;
+            CREATE USER 'w_puser'@'%' IDENTIFIED BY 'wp_pass';
+            GRANT ALL PRIVILEGES ON wpdb.* TO 'wp_user'@'%';
+            FLUSH PRIVILEGES;
+
+            echo "🧨 Drop and recreate database"
+            mysql -u wp_user -pwp_pass -e "DROP DATABASE IF EXISTS wp_db; CREATE DATABASE wp_db;"
+
+            echo "📥 Import SQL dump"
+            mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
+
+            echo "🔧 Update siteurl and home"
+            mysql -u wp_user -pwp_pass wp_db -e "
+              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
+              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';
