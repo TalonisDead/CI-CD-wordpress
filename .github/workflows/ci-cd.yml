@@ -61,4 +61,4 @@ jobs:
             echo "🔧 Update siteurl and home"
             mysql -u wp_user -pwp_pass wp_db -e "
               UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
-              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';
+              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';"
