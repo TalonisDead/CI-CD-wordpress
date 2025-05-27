@@ -20,50 +20,54 @@ jobs:
 
       - name: 🛠️ Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest . 
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
+
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-      - name: 📦 Deploy on EC2 via SSH
+
+      - name: 📦 Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Pulling latest image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-            echo "Stopping and removing old container if exists..."
+            echo "🧰 Update and install MySQL"
+            sudo apt update
+            sudo apt install mysql-server -y
+            sudo systemctl start mysql
+            sudo systemctl enable mysql
+
+            echo "🛠️ Setup MySQL Database and User"
+            sudo mysql -e "
+              CREATE DATABASE IF NOT EXISTS wp_db;
+              CREATE USER IF NOT EXISTS 'wp_user'@'%' IDENTIFIED BY 'wp_pass';
+              GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%';
+              FLUSH PRIVILEGES;
+            "
+
+            echo "🧼 Clean up old WordPress container"
             docker stop wp-one || true
             docker rm wp-one || true
-            echo "Starting new WordPress container..."
+
+            echo "🚀 Run new WordPress container"
             docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
-              -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
+              -e WORDPRESS_DB_HOST=localhost \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-        - name: 🛠️ Build mysql server and db_wp
-          run: |
-            echo "build mysql server" 
-            sudo apt install mysql-server -y
-            sudo systemctl start mysql
-            sudo systemctl enable mysql
-            sudo systemctl status mysql
-            echo "create user mysql" 
-            sudo mysql
-            CREATE DATABASE wp_db;
-            CREATE USER 'w_puser'@'%' IDENTIFIED BY 'wp_pass';
-            GRANT ALL PRIVILEGES ON wpdb.* TO 'wp_user'@'%';
-            FLUSH PRIVILEGES;
 
-            echo "🧨 Drop and recreate database"
-            mysql -u wp_user -pwp_pass -e "DROP DATABASE IF EXISTS wp_db; CREATE DATABASE wp_db;"
+            echo "📦 Copy wp1_backup.sql from container to host"
+            sleep 10  # Wait for container to fully start
+            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql /tmp/wp1_backup.sql
 
-          #  echo "📥 Import SQL dump"
-          #  mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
+            echo "📥 Import SQL backup"
+            mysql -u wp_user -pwp_pass wp_db < /tmp/wp1_backup.sql
 
             echo "🔧 Update siteurl and home"
             mysql -u wp_user -pwp_pass wp_db -e "
               UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
               UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';
+            "
