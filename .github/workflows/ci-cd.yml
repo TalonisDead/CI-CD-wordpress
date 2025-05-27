@@ -61,10 +61,10 @@ jobs:
 
             echo "📦 Copy wp1_backup.sql from container to host"
             sleep 10  # Wait for container to fully start
-            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql /tmp/wp1_backup.sql
+            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
 
             echo "📥 Import SQL backup"
-            mysql -u wp_user -pwp_pass wp_db < /tmp/wp1_backup.sql
+            sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
 
             echo "🔧 Update siteurl and home"
             mysql -u wp_user -pwp_pass wp_db -e "
