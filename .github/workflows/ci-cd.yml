@@ -31,15 +31,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mysql-client
 
-      - name: 📡 Upload SQL to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "wordpress-docker/Dockerfile/wordpress/mysql_db/wp1_backup.sql"
-          target: "~/wordpress-docker/Dockerfile/wordpress/mysql_db/"
-
       - name: 📦 Deploy and Replace DB on EC2
         uses: appleboy/ssh-action@master
         with:
