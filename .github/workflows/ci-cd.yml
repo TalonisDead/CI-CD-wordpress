@@ -41,5 +41,5 @@ jobs:
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
-              -e WORDPRESS_DB_HOST=46.137.236.178 \
+              -e WORDPRESS_DB_HOST=18.140.72.3 \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
