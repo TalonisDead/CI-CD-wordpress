@@ -20,11 +20,11 @@ jobs:
 
       - name: 🛠️ Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
+          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
 
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+          sudo docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
       - name: 📦 Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
@@ -48,11 +48,11 @@ jobs:
             "
 
             echo "🧼 Clean up old WordPress container"
-            docker stop wp-one || true
-            docker rm wp-one || true
+            sudo docker stop wp-one || true
+            sudo docker rm wp-one || true
 
             echo "🚀 Run new WordPress container"
-            docker run -d --name wp-one -p 80:80 \
+            sudo docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
@@ -61,7 +61,7 @@ jobs:
 
             echo "📦 Copy wp1_backup.sql from container to host"
             sleep 10  # Wait for container to fully start
-            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
+            sudo docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
 
             echo "📥 Import SQL backup"
             sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
