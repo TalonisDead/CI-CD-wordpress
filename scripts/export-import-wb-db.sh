@@ -13,7 +13,7 @@ OLD_URL="http://192.168.1.100:8000"
 NEW_URL="http://46.137.236.178"
 
 # Output file
-BACKUP_PATH="wordpress-docker/Dockerfile/wordpress/mysql_db"
+BACKUP_PATH="$HOME/CI-CD-wordpress/mysql_db"
 BACKUP_FILE="$BACKUP_PATH/wp1_backup.sql"
 
 mkdir -p "$BACKUP_PATH"
