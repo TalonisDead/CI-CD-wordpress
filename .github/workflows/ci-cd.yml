@@ -75,8 +75,4 @@ jobs:
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
 
-        - name: 📤 Export and Prepare SQL from Local
-          run: |
-              bash ./scripts/export-import-wp-db.sh
-
             echo "✅ Done"
