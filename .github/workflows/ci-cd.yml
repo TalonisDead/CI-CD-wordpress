@@ -56,7 +56,7 @@ jobs:
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
-              -e WORDPRESS_DB_HOST=localhost \
+              -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
             echo "📦 Copy wp1_backup.sql from container to host"
