@@ -53,12 +53,12 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-            echo "📦 Copy wp1_backup.sql from container to host"
-            sleep 10  # Wait for container to fully start
-            docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
-            echo "📥 Import SQL backup"
-            sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
-            echo "🔧 Update siteurl and home"
-            mysql -u wp_user -pwp_pass wp_db -e "
-              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
-              UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';"
+           # echo "📦 Copy wp1_backup.sql from container to host"
+           # sleep 10  # Wait for container to fully start
+           # docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
+           # echo "📥 Import SQL backup"
+          #  sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
+           # echo "🔧 Update siteurl and home"
+          #  mysql -u wp_user -pwp_pass wp_db -e "
+          #    UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
+          #    UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';"
