@@ -53,7 +53,7 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-           # echo "📦 Copy wp1_backup.sql from container to host"
+           # echo "📦 Copy file wp1_backup.sql from container to host"
            # sleep 10  # Wait for container to fully start
            # docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
            # echo "📥 Import SQL backup"
