@@ -1,5 +1,13 @@
 name: CI/CD Pipeline for WordPress
-
+# Những việc cần làm khi cài máy lần đầu:
+# Tạo mật khẩu cho $USER
+# sudo usermod -aG sudo $USER
+# sudo usermod -aG docker $USER
+# newgrp docker
+# ssh-keygen -t rsa -b 4096 -f ~/.ssh/gcloud_ubuntu_key
+# nano ~/.ssh/authorized_keys
+# chmod 600 ~/.ssh/authorized_keys
+# chmod 700 ~/.ssh
 on:
   push:
     branches:
@@ -31,18 +39,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "🧰 Update and install MySQL"
+            echo "🚧 Update hệ thống và cài Docker + MariaDB"
             sudo apt update
-            sudo apt install mariadb-server -y
+            sudo apt install -y docker.io mariadb-server
+            
             sudo systemctl start mariadb
             sudo systemctl enable mariadb
-            echo "🛠️ Cấu hình database"
-            sudo mysql <<EOF
-              CREATE DATABASE IF NOT EXISTS wp_db;
-              CREATE USER IF NOT EXISTS 'wp_user'@'%' IDENTIFIED BY 'wp_pass';
-              GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%';
-              FLUSH PRIVILEGES;
-            EOF
+            sudo systemctl start docker
+            sudo systemctl enable docker
             
             echo "🧼 Clean up old WordPress container"
             docker stop wp-one || true
@@ -63,13 +67,3 @@ jobs:
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
 
-
-           # echo "📦 Copy file wp1_backup.sql from container to host"
-           # sleep 10  # Wait for container to fully start
-           # docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
-           # echo "📥 Import SQL backup"
-          #  sudo mysql -u wp_user -pwp_pass wp_db < wp1_backup.sql
-           # echo "🔧 Update siteurl and home"
-          #  mysql -u wp_user -pwp_pass wp_db -e "
-          #    UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'siteurl';
-          #    UPDATE wp_options SET option_value = 'http://${{ secrets.EC2_HOST }}' WHERE option_name = 'home';"
