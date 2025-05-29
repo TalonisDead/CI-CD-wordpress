@@ -43,9 +43,17 @@ jobs:
               GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%';
               FLUSH PRIVILEGES;
             "
+            
             echo "🧼 Clean up old WordPress container"
             docker stop wp-one || true
             docker rm wp-one || true
+
+            echo "🧹 Remove old Docker image"
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/wp-one:latest || true
+
+            echo "📥 Pull latest Docker image"
+            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+
             echo "🚀 Run new WordPress container"
             docker run -d --name wp-one -p 80:80 \
               -e WORDPRESS_DB_NAME=wp_db \
@@ -53,6 +61,9 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=wp_pass \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+
+
+
            # echo "📦 Copy file wp1_backup.sql from container to host"
            # sleep 10  # Wait for container to fully start
            # docker cp wp-one:/var/www/html/mysql_db/wp1_backup.sql wp1_backup.sql
