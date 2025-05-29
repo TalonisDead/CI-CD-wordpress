@@ -66,5 +66,5 @@ jobs:
               -e WORDPRESS_DB_NAME=${{ secrets.EC2_DB_NAME }} \
               -e WORDPRESS_DB_USER=${{ secrets.EC2_DB_USER }} \
               -e WORDPRESS_DB_PASSWORD=${{ secrets.EC2_DB_PASSWORD }} \
-              -e WORDPRESS_DB_HOST=${{ secrets.EC2_DB_HOST }} \
+              -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
