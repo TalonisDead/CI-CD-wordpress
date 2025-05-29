@@ -36,13 +36,13 @@ jobs:
             sudo apt install mariadb-server -y
             sudo systemctl start mariadb
             sudo systemctl enable mariadb
-            echo "🛠️ Setup MySQL Database and User"
-            sudo mysql  "
+            echo "🛠️ Cấu hình database"
+            sudo mysql <<EOF
               CREATE DATABASE IF NOT EXISTS wp_db;
               CREATE USER IF NOT EXISTS 'wp_user'@'%' IDENTIFIED BY 'wp_pass';
               GRANT ALL PRIVILEGES ON wp_db.* TO 'wp_user'@'%';
               FLUSH PRIVILEGES;
-            "
+            EOF
             
             echo "🧼 Clean up old WordPress container"
             docker stop wp-one || true
@@ -59,7 +59,7 @@ jobs:
               -e WORDPRESS_DB_NAME=wp_db \
               -e WORDPRESS_DB_USER=wp_user \
               -e WORDPRESS_DB_PASSWORD=wp_pass \
-              -e WORDPRESS_DB_HOST=${{ secrets.EC2_HOST }} \
+              -e WORDPRESS_DB_HOST=localhost \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
 
 
