@@ -34,8 +34,8 @@ jobs:
             echo "🧰 Update and install MySQL"
             sudo apt update
             sudo apt install mariadb-server -y
-            sudo systemctl start mysql
-            sudo systemctl enable mysql
+            sudo systemctl start mariadb
+            sudo systemctl enable mariadb
             echo "🛠️ Setup MySQL Database and User"
             sudo mysql  "
               CREATE DATABASE IF NOT EXISTS wp_db;
