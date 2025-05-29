@@ -1,4 +1,3 @@
-name: CI/CD Pipeline for WordPress
 # Những việc cần làm khi cài máy lần đầu:
 # Tạo mật khẩu cho $USER
 # sudo usermod -aG sudo $USER
