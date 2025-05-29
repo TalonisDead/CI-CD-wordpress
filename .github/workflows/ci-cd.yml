@@ -8,6 +8,7 @@ name: CI/CD Pipeline for WordPress
 # nano ~/.ssh/authorized_keys
 # chmod 600 ~/.ssh/authorized_keys
 # chmod 700 ~/.ssh
+# set phạm vi của mysql database 0.0.0.0
 on:
   push:
     branches:
