@@ -12,6 +12,7 @@ name: CI/CD Pipeline for WordPress
 # set phạm vi của mysql database 0.0.0.0 và reset dịch vụ
 
 name: CI/CD Pipeline for WordPress
+
 on:
   push:
     branches:
@@ -68,6 +69,3 @@ jobs:
               -e WORDPRESS_DB_PASSWORD=${{ secrets.EC2_DB_PASSWORD }} \
               -e WORDPRESS_DB_HOST=${{ secrets.EC2_DB_HOST }} \
               ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
-
-
-
