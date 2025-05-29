@@ -33,11 +33,11 @@ jobs:
 
       - name: 🏗️ Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wp-one:${{ github.ref_name }} .
 
       - name: 📤 Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/wp-one:${{ github.ref_name }}
 
   deploy:
     name: 🚀 Deploy to EC2
@@ -56,10 +56,10 @@ jobs:
             docker rm wp-one || true
 
             echo "🧹 Remove old Docker image"
-            docker rmi ${{ secrets.DOCKER_USERNAME }}/wp-one:latest || true
+            docker rmi ${{ secrets.DOCKER_USERNAME }}/wp-one:${{ github.ref_name }} || true
 
             echo "📥 Pull latest Docker image"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/wp-one:${{ github.ref_name }}
 
             echo "🚀 Run new WordPress container"
             docker run -d --name wp-one -p 80:80 \
